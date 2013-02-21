@@ -1,28 +1,33 @@
-require 'sinatra'
-require 'braintree'
-require 'shotgun'
+require "rubygems"
+require "sinatra"
+require "braintree"
 
 Braintree::Configuration.environment = :sandbox
-Braintree::Configuration.merchant_id = "5yhyd43d5sws9378"
-Braintree::Configuration.public_key = "tcrgrwbgvz974cjx"
-Braintree::Configuration.private_key = "mrx3rh84sfktfjhb"
+Braintree::Configuration.merchant_id = "use_your_merchant_id"
+Braintree::Configuration.public_key = "use_your_public_key"
+Braintree::Configuration.private_key = "use_your_private_key"
 
 get "/" do
-  tr_data = Braintree::TransparentRedirect.create_customer_data(
-    :redirect_url => "http://localhost:9393/braintree"
-    )
-
-  erb :form, :locals => {:tr_data => tr_data}
+  erb :braintree
 end
 
-get "/braintree" do
-  result = Braintree::TransparentRedirect.confirm(request.query_string)
-
+post '/create_customer' do
+  result = Braintree::Customer.create(
+    :first_name => params[:first_name],
+    :last_name => params[:last_name],
+    :credit_card => {
+      :billing_address => {
+        :postal_code => params[:postal_code]
+      },
+      :number => params[:number],
+      :expiration_month => params[:month],
+      :expiration_year => params[:year],
+      :cvv => params[:cvv]
+    }
+  )
   if result.success?
-    message = "Customer Created with the email: #{result.customer.email}"
+    "<h1>Customer created with name: #{result.customer.first_name} #{result.customer.last_name}</h1>"
   else
-    message = "Message: #{result.message}"
+    "<h1>Error: #{result.message}</h1>"
   end
-
-  erb :response, :locals => {:message => message}
 end
