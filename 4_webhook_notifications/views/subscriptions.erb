@@ -1,0 +1,14 @@
+<html>
+  <body>
+    <h1>Subscription Status</h1>
+    <p>
+      <% if result.success? %>
+        Subscription created: <%= result.subscription.id %>
+      <br />
+        Status: <%= result.subscription.status %>
+      <% else %>
+        Failed: <%= result.message %>
+      <% end %>
+    </p>
+  </body>
+</html>

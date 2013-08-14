@@ -1,0 +1,15 @@
+<html>
+  <body>
+    <h1>Response</h1>
+    <p>
+      <% if result.success? %>
+        Customer created: <%= result.customer.first_name %> <%= result.customer.last_name %>
+    </p>
+    <p>
+        <a href="/subscriptions?id=<%= result.customer.id %>">Click here to sign this Customer up for a recurring payment</a>
+      <% else %>
+          Failed: <%= result.message %>
+      <% end %>
+    </p>
+  </body>
+</html>
